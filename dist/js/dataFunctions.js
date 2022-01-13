@@ -43,18 +43,34 @@ export const getWeatherFromCoords = async (locationObj) => {
 };
 
 export const getCoordsFromApi = async (entryText, units) => {
-    const regex = /^\d+$/g;
-    const flag = regex.test(entryText) ? "zip" : "q";
-    const url = `https://api.openweathermap.org/data/2.5/weather?${flag}=${entryText}&units=${units}&appid=${WEATHER_API_KEY}`;
-    const encodedUrl = encodeURI(url);
+    // const regex = /^\d+$/g;
+    // const flag = regex.test(entryText) ? "zip" : "q";
+    // const url = `https://api.openweathermap.org/data/2.5/weather?${flag}=${entryText}&units=${units}&appid=${WEATHER_API_KEY}`;
+    // const encodedUrl = encodeURI(url);
+    // try {
+    //     const dataStream = await fetch(encodedUrl);
+    //     const jsonData = await dataStream.json();
+    //     return jsonData;
+    // } catch (err) {
+    //     console.log(err.stack);
+    // }
+
+    
+    // for serverless function
+    const urlDataObj = {
+        text: entryText,
+        units: units 
+    };
     try {
-        const dataStream = await fetch(encodedUrl);
+        const dataStream = await fetch('./.netlify/functions/get_coords', {
+            method: "POST",
+            body: JSON.stringify(urlDataObj)
+        });
         const jsonData = await dataStream.json();
         return jsonData;
     } catch (err) {
-        console.log(err.stack);
+        console.error(err);
     }
-
 
 };
 
